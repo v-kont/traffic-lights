@@ -15,14 +15,15 @@ Task:
         
         All states should be logged to file.
         
-    Comments:
-            1. Yes, I know AbstractFactory + Concurrency a little bit ( :) ) overwhelming
-            for those simple traffic lights, but it's just a showcase (and for Open-Close principle as well);
-            2. Internalization should be done in another way (more shortly, cause we can use just one Factory class), so
-            Russian/English/Japanese traffic lights I used just for simplification of distinction
+Comments:
+        1. Yes, I know AbstractFactory + Concurrency a little bit ( :) ) overwhelming
+        for those simple traffic lights, but it's just a showcase (and for Open-Close principle as well);
+        
+        2. Internalization should be done in another way (more shortly, cause we can use just one Factory class), so
+        Russian/English/Japanese traffic lights I used just for simplification of distinction
     
     
-    TODO:
+TODO:
         3. Implement correct thread synchronization
         4. move fabrics into Manager. use them by command 'add' from user
         5. Implement annotation for checking lang codes
