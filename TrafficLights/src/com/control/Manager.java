@@ -2,6 +2,7 @@ package com.control;
 
 import com.log.virtual.Logger;
 import com.trafficlights.TrafficLights;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -23,14 +24,8 @@ public class Manager implements Runnable {
     }
     
     private int getNextID(){
-        Set<Integer> a = TLList.keySet();
-        
-        int max = 0;
-        for(int temp : a){
-            if(temp > max){
-                max = temp;
-            }
-        }
+        Set<Integer> keyset = TLList.keySet();
+        int max = keyset.stream().max(Comparator.naturalOrder()).orElse(0);
         return ++max;
     }
        
@@ -108,20 +103,18 @@ public class Manager implements Runnable {
     }
     
     private void help(){
-        System.out.println("");
-        System.out.println("To get this help type 'help'");
+        System.out.println("\nTo get this help type 'help'");
         System.out.println("To stop Manager type 'stop manager'");
         System.out.println("To get list and states of traffic lights type 'list'");
         System.out.println("To add traffic light type 'add <langcode>'. For example, 'add ru'");
-        System.out.println("To start specific traffic light type 'start <number of tl>'");
-        System.out.println("To stop specific traffic light type 'stop <number of tl>'");
-        System.out.println("To remove traffic light type 'remove <ID of traffic light>'. For example, 'remove 0'");
+        System.out.println("To start specific traffic light type 'start <ID of traffic light>'. For example, 'start 1'");
+        System.out.println("To stop specific traffic light type 'stop <ID of traffic light>'. For example, 'stop 1'");
+        System.out.println("To remove traffic light type 'remove <ID of traffic light>'. For example, 'remove 1'");
         System.out.println("To change traffic light current light type 'change'");
     }
     
     private void list(){
-        System.out.println("");
-        System.out.println("List of traffic lights:");
+        System.out.println("\nList of traffic lights:");
         
         for(Map.Entry<Integer, TrafficLights> entry : TLList.entrySet()){
             TrafficLights tl = entry.getValue();
@@ -167,8 +160,11 @@ public class Manager implements Runnable {
         System.out.println("Number of active threads is " + Thread.activeCount());
         
         while(this.runMode){
-            if (scanner.hasNext()) {
-                String cmd = scanner.nextLine().trim();
+            String cmd = "";
+            if (scanner.hasNext()
+                    && (cmd = scanner.nextLine().trim()) != null
+                    && !cmd.isEmpty()) {
+                String id = "";
                 switch(cmd){
                     case ("help"):
                         help();
@@ -182,14 +178,17 @@ public class Manager implements Runnable {
                     case ("change"):
                         setYellowLightOn();
                         break;
-                    case ("start "): // TODO: make correct implementation
-                        String id = cmd.replaceAll("", "");
-                        startTL(Integer.getInteger(id));
-                        break;
                     default:
-                        System.out.println("Incorrect command!");
+                        if(cmd.matches("^stop \\d")){
+                            id = cmd.replaceAll("\\D", "");
+                            stopTL(Integer.valueOf(id));
+                        } else if(cmd.matches("^start \\d")) {
+                            id = cmd.replaceAll("\\D", "");
+                            startTL(Integer.valueOf(id));
+                        } else {
+                            System.out.println("Incorrect command!");
+                        }
                 }
-
             }
         }
     }
